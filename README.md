@@ -1,120 +1,240 @@
 # EXP.NO.7-Simulation-of-Digital-Modulation-Techniques
+7. Simulation of Digital Modulation Techniques Such as
+   i) Amplitude Shift Keying (ASK)
+   ii) Frequency Shift Keying (FSK)
+   iii) Phase Shift Keying (PSK)
 
-## AIM:
-To simulate digital modulation techniques such as:
-1. Amplitude Shift Keying (ASK)
-2. Frequency Shift Keying (FSK)
-3. Phase Shift Keying (PSK
+# AIM
 
-## SOFTWARE REQUIRED:
-Google Collab
+To simulate Amplitude Shift Keying (ASK), Frequency Shift Keying (FSK), and Phase Shift Keying (PSK) using Python, analyze their waveforms, and understand how digital data 
+is transmitted using these modulation techniques.
 
-## ALGORITHM:
-### Amplitude Shift Keying (ASK)
-1. Define a binary input signal (e.g., [1, 0, 1, 1, 0]).
-2. Set a carrier frequency.
-3. Multiply the carrier by the bit (1 or 0) to get ASK modulated signal.
-4. Plot the input signal, carrier, and ASK signal.
+# SOFTWARE REQUIRED
 
-### Frequency Shift Keying (FSK)
-1. Define two carrier frequencies: one for bit 1, another for bit 0.
-2. Multiply bit 1 with one frequency, bit 0 with the other.
-3. Concatenate all modulated bits.
-4. Plot the input signal and FSK signal.
+1. Python 3.x 
 
-### Phase Shift Keying (PSK)
-1. Use a single frequency carrier.
-2. For bit 1, send the signal with phase 0.
-3. For bit 0, invert the signal (phase shift by 180°).
-4. Plot the input signal and PSK signal.
+2. NumPy
 
+3. Matplotlib
+   
+# ALGORITHMS
 
-## PROGRAM:
-```import numpy as np
+1. Define the binary data sequence.
+
+2. Generate a time vector based on bit duration and sampling rate.
+
+3. Create the carrier signal:
+
+    ASK: Multiply carrier with binary data.
+
+    FSK: Switch between two frequencies based on binary data.
+
+    PSK: Apply a phase shift for bit ‘0’.
+
+4. Perform modulation using the respective technique.
+
+5. Plot the message and modulated signals.
+
+# PROGRAM
+#Amplitude Shift Keying (ASK)
+
+import numpy as np
+
 import matplotlib.pyplot as plt
 
-# Binary data
-data = [1, 0, 1, 1, 0]
-bit_duration = 1
-Fs = 1000  # Sampling rate
-t_bit = np.linspace(0, bit_duration, Fs, endpoint=False)
+data = [1, 0, 1, 0, 1, 1, 0, 1]  # Binary data to be transmitted
 
-# Carrier frequencies
-f1 = 10  # FSK freq for bit 1
-f0 = 2   # FSK freq for bit 0
-f_c = 5  # Common carrier for ASK and PSK
+bit_duration = 1  # Duration of each bit in seconds
 
-# --- ASK Function ---
-def ask(bit):
-    return np.cos(2 * np.pi * f_c * t_bit) if bit == 1 else np.zeros(len(t_bit))
+fc = 10  # Carrier frequency in Hz
 
-# --- Repeater ---
-def repeat_waveform(fn, bitstream):
-    modulated = []
-    for b in bitstream:
-        modulated.extend(fn(b))
-    return modulated
+amplitude = 2  # Carrier amplitude
 
-# Generate signals
-digital = np.repeat(data, Fs)
-ask_signal = repeat_waveform(ask, data)
+sampling_rate = 1000  # Number of samples per second
 
-# FSK signal
-fsk_signal = []
-for bit in data:
-    freq = f1 if bit else f0
-    wave = np.sin(2 * np.pi * freq * t_bit)
-    fsk_signal.extend(wave)
+t = np.arange(0, bit_duration * len(data), 1/sampling_rate)
 
-# PSK signal
-psk_signal = []
-for bit in data:
-    phase = 0 if bit == 1 else np.pi
-    wave = np.sin(2 * np.pi * f_c * t_bit + phase)
-    psk_signal.extend(wave)
+message_signal = np.repeat(data, sampling_rate * bit_duration)
 
-# Time axis
-time = np.linspace(0, bit_duration * len(data), Fs * len(data), endpoint=False)
+carrier_signal = amplitude * np.sin(2 * np.pi * fc * t)
 
-# Plotting
-plt.figure(figsize=(14, 10))
+ask_signal = amplitude * message_signal * np.sin(2 * np.pi * fc * t)
 
-# Digital Signal
-plt.subplot(4, 1, 1)
-plt.plot(time, digital, color='black')
-plt.title("Digital Input Signal")
-plt.ylabel("Amplitude")
-plt.grid(True)
+plt.figure(figsize=(12, 8))
 
-# ASK Signal
-plt.subplot(4, 1, 2)
-plt.plot(time, ask_signal, color='green')
-plt.title("Amplitude Shift Keying (ASK using Cosine Carrier)")
-plt.ylabel("Amplitude")
-plt.grid(True)
+plt.subplot(3, 1, 1)
 
-# FSK Signal
-plt.subplot(4, 1, 3)
-plt.plot(time, fsk_signal, color='blue')
-plt.title("Frequency Shift Keying (FSK)")
-plt.ylabel("Amplitude")
-plt.grid(True)
+plt.plot(t, message_signal, 'b')
 
-# PSK Signal
-plt.subplot(4, 1, 4)
-plt.plot(time, psk_signal, color='red')
-plt.title("Phase Shift Keying (PSK)")
-plt.xlabel("Time (s)")
-plt.ylabel("Amplitude")
-plt.grid(True)
+plt.title('Message Signal')
+
+plt.xlabel('Time (s)')
+
+plt.ylabel('Amplitude')
+
+plt.subplot(3, 1, 2)
+
+plt.plot(t, carrier_signal, 'r')
+
+plt.title('Carrier Signal')
+
+plt.xlabel('Time (s)')
+
+plt.ylabel('Amplitude')
+
+plt.subplot(3, 1, 3)
+
+plt.plot(t, ask_signal, 'g')
+
+plt.title('Amplitude Shift Keying Signal')
+
+plt.xlabel('Time (s)')
+
+plt.ylabel('Amplitude')
 
 plt.tight_layout()
+
 plt.show()
-```
 
-## OUTPUT:
-![image](https://github.com/user-attachments/assets/4f5d64ce-c33f-49be-a3a6-81f18395a57c)
 
- 
-## RESULT:
-The simulation of digital modulation techniques such as ASK, FSK, and PSK was successfully implemented using Python. The differences between amplitude, frequency, and phase modulation were clearly observed in the plotted waveforms.
+#Frequency Shift Keying (FSK)
+
+import numpy as np
+
+import matplotlib.pyplot as plt
+
+data = [1, 0, 1, 0, 1, 1, 0, 1]  # Binary data to be transmitted
+
+bit_duration = 1  # Duration of each bit in seconds
+
+fc1 = 10  # Frequency for binary '1'
+
+fc2 = 5   # Frequency for binary '0'
+
+amplitude = 2  # Carrier amplitude
+
+sampling_rate = 1000  # Samples per second
+
+t = np.arange(0, bit_duration * len(data), 1/sampling_rate)
+
+message_signal = np.repeat(data, sampling_rate * bit_duration)
+
+fsk_signal = amplitude * (np.sin(2 * np.pi * fc1 * t) * message_signal + np.sin(2 * np.pi * fc2 * t) * (1 - message_signal))
+
+plt.figure(figsize=(12, 8))
+
+plt.subplot(3, 1, 1)
+
+plt.plot(t, message_signal, 'b')
+
+plt.title('Message Signal')
+
+plt.xlabel('Time (s)')
+
+plt.ylabel('Amplitude')
+
+plt.subplot(3, 1, 2)
+
+plt.plot(t, amplitude * np.sin(2 * np.pi * fc1 * t), 'r', alpha=0.5, label="Carrier for 1")
+
+plt.plot(t, amplitude * np.sin(2 * np.pi * fc2 * t), 'm', alpha=0.5, label="Carrier for 0")
+
+plt.title('Carrier Signals (FSK)')
+
+plt.xlabel('Time (s)')
+
+plt.ylabel('Amplitude')
+
+plt.legend()
+
+plt.subplot(3, 1, 3)
+
+plt.plot(t, fsk_signal, 'g')
+
+plt.title('Frequency Shift Keying (FSK) Signal')
+
+plt.xlabel('Time (s)')
+
+plt.ylabel('Amplitude')
+
+plt.tight_layout()
+
+plt.show()
+
+#Phase Shift Keying (PSK)
+
+import numpy as np
+
+import matplotlib.pyplot as plt
+
+data = [1, 0, 1, 0, 1, 1, 0, 1]  # Binary data to be transmitted
+
+bit_duration = 1  # Duration of each bit in seconds
+
+fc = 10  # Carrier frequency in Hz
+
+amplitude = 2  # Carrier amplitude
+
+sampling_rate = 1000  # Samples per second
+
+t = np.arange(0, bit_duration * len(data), 1/sampling_rate)
+
+message_signal = np.repeat(data, sampling_rate * bit_duration)
+
+carrier_signal = amplitude * np.sin(2 * np.pi * fc * t)
+
+psk_signal = amplitude * np.sin(2 * np.pi * fc * t + np.pi * (1 - message_signal))
+
+plt.figure(figsize=(12, 8))
+
+plt.subplot(3, 1, 1)
+
+plt.plot(t, message_signal, 'b')
+
+plt.title('Message Signal')
+
+plt.xlabel('Time (s)')
+
+plt.ylabel('Amplitude')
+
+plt.subplot(3, 1, 2)
+
+plt.plot(t, carrier_signal, 'r')
+
+plt.title('Carrier Signal')
+
+plt.xlabel('Time (s)')
+
+plt.ylabel('Amplitude')
+
+plt.subplot(3, 1, 3)
+
+plt.plot(t, psk_signal, 'g')
+
+plt.title('Phase Shift Keying (PSK) Signal')
+
+plt.xlabel('Time (s)')
+
+plt.ylabel('Amplitude')
+
+plt.tight_layout()
+
+plt.show()
+# OUTPUT
+1. Amplitude Shift Keying(ASK)
+   ![Screenshot 2025-03-31 200618](https://github.com/user-attachments/assets/df95795c-1efb-426f-97ff-897fbd2a7544)
+2. Frequency Shift Keying(FSK)
+   ![Screenshot 2025-03-31 200825](https://github.com/user-attachments/assets/c09405b9-b3e6-4856-93bd-f37993dae4b6)
+3. Phase Shift Keying(PSK)
+   ![Screenshot 2025-03-31 202809](https://github.com/user-attachments/assets/4b2a0f93-9297-4849-b951-6f78164d915d)
+
+
+
+
+
+# RESULT
+
+The digital modulation techniques ASK, FSK, and PSK were successfully simulated using Python. 
+
+The simulation demonstrated how ASK, FSK, and PSK modulate a carrier signal to transmit binary data. Each modulation technique has its own method of altering the carrier
+wave, which is essential in digital communication systems.
